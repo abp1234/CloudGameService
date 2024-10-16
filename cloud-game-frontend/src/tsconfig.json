@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "strict": true,
+    "jsx": "react",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "lib": ["dom", "es2015"]
+  },
+  "include": ["./src/**/*", "c:/Users/SSAFY/Desktop/PL/CloudGameService/cloud-game-frontend/src/**/*"],
+  "exclude": ["node_modules"]
+}
