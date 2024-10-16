@@ -1,17 +1,29 @@
 package com.example.cloudgame;
 
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.socket.config.annotation.EnableWebSocket;
-import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
-import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
+import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+import org.springframework.web.socket.config.annotation.*;
 
 @Configuration
-@EnableWebSocket
-public class WebSocketConfig implements WebSocketConfigurer {
+//@EnableWebSocket
+@EnableWebSocketMessageBroker
+public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
-    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        // WebSocket 핸들러 등록
-        registry.addHandler(new SignalHandler(), "/signal").setAllowedOrigins("*");
+    public void configureMessageBroker(MessageBrokerRegistry config){
+        config.enableSimpleBroker("/topic");
+        config.setApplicationDestinationPrefixes("/app");
     }
+
+    @Override
+    public void registerStompEndpoints(StompEndpointRegistry registry){
+        registry.addEndpoint("/game").setAllowedOriginPatterns("*").withSockJS();
+    }
+
+//    @Override
+//    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+//        // WebSocket 핸들러 등록
+////        registry.addHandler(new SignalHandler(), "/signal").setAllowedOrigins("*");
+//        registry.addEndpoint("/game").setAllowedOriginPatterns("*").withSockJS();
+//    }
 }

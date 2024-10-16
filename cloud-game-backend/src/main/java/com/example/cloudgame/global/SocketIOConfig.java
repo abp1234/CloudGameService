@@ -15,7 +15,9 @@ public class SocketIOConfig {
         // netty-socketio의 Configuration을 사용할 때 전체 경로로 명시
         com.corundumstudio.socketio.Configuration config = new com.corundumstudio.socketio.Configuration();
         config.setHostname("localhost");
-        config.setPort(8083);
+        config.setPort(8080);
+        config.setAllowCustomRequests(true);
+        config.setOrigin("*");
 
         server = new SocketIOServer(config); // SocketIOServer 객체 생성
         server.start(); // 서버 시작

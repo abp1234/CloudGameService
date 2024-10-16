@@ -8,7 +8,7 @@ const StreamingComponent: React.FC = () => {
   const peerRef = useRef<Instance | null>(null);
 
   useEffect(() => {
-    socketRef.current = io('http://localhost:8081',{
+    socketRef.current = io('http://localhost:8080',{
       transports:['websocket','polling'],
     });
 
