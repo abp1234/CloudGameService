@@ -1,54 +1,51 @@
 import React, { useEffect, useState } from 'react';
 import SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';
-import logo from './logo.svg';
 import './App.css';
 
-const App = ()=>{
+const App = () => {
   const [result, setResult] = useState('');
-  // const [client, setClient] = useState(null);
+  const [stompClient, setStompClient] = useState(null);
 
-  useEffect(()=>{
-    const socket = io('http://localhost:8080',{
+  useEffect(() => {
+    console.log('Attempting to connect to WebSocket...');
+
+    // SockJS + STOMP 클라이언트 설정
+    const socket = new SockJS('http://localhost:8080/game',{
       transports:['websocket'],
-    })
-    socket.on('connect',()=>{
-      console.log('Connected to server')
-    })
-    socket.on('result',(message)=>{
-      setResult(message);
-    })
-    return ()=>{
-      socket.disconnect();
+      reconnection:true,
+    });
+    const stompClient = Stomp.over(socket);
+
+    stompClient.connect({}, () => {
+      console.log('Connected to server!');
+      
+      // '/topic/result'에 대해 구독
+      stompClient.subscribe('/topic/result', (message) => {
+        console.log('Received message from server:', message.body);
+        setResult(message.body);
+      });
+    });
+
+    setStompClient(stompClient);
+
+    return () => {
+      console.log('Disconnecting from WebSocket...');
+      if (stompClient) {
+        stompClient.disconnect();
+      }
+    };
+  }, []);
+
+  // 사용자가 게임을 플레이할 때 호출되는 함수
+  const playGame = (choice) => {
+    if (stompClient) {
+      console.log(`Sending player's choice: ${choice}`);
+      stompClient.send('/app/play', {}, choice);  // '/app/play'로 메시지 전송
+    } else {
+      console.error('Socket is not connected!');
     }
-  },[]);
-
-  const playGame = (choice)=>{
-    if(socket){
-      socket.emit('play',choice);
-    }
-  }
-    // const socket = new SockJS('http://localhost:8080/game');
-    // const stompClient = Stomp.over(() => socket);
-
-    // stompClient.connect({},()=>{
-    //   stompClient.subscribe('/topic/result',(message)=>{
-    //     setResult(message.body);
-    //   })
-    // })
-
-    // setClient(stompClient);
-
-  //   return ()=>{
-  //     stompClient.disconnect();
-  //   }
-  // },[]);
-
-  // const playGame =(choice)=>{
-  //   if(client){
-  //     client.send('/app/play',{},choice);
-  //   }
-  // }
+  };
 
   return (
     <div>
@@ -58,30 +55,7 @@ const App = ()=>{
       <button onClick={() => playGame('scissors')}>Scissors</button>
       <h2>{result}</h2>
     </div>
-  )
-
-
+  );
 }
-
-// function App() {
-//   return (
-//     <div className="App">
-//       <header className="App-header">
-//         <img src={logo} className="App-logo" alt="logo" />
-//         <p>
-//           Edit <code>src/App.js</code> and save to reload.
-//         </p>
-//         <a
-//           className="App-link"
-//           href="https://reactjs.org"
-//           target="_blank"
-//           rel="noopener noreferrer"
-//         >
-//           Learn React
-//         </a>
-//       </header>
-//     </div>
-//   );
-// }
 
 export default App;

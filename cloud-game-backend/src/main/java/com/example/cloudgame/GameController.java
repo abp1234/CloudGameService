@@ -1,33 +1,38 @@
 package com.example.cloudgame;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 @Controller
-public class GameController{
+public class GameController {
+
+    private static final Logger logger = LoggerFactory.getLogger(GameController.class);
 
     @MessageMapping("/play")
     @SendTo("/topic/result")
-    public String playGame(String userChoice){
-        String[] choices ={"rock","paper","scissors"};
-        String serverChoice = choices[(int) (Math.random()*3)];
+    public String playGame(String userChoice) {
+        logger.info("Received user's choice: {}", userChoice);  // 디버깅 로그
+
+        String[] choices = {"rock", "paper", "scissors"};
+        String serverChoice = choices[(int) (Math.random() * 3)];
 
         String result;
-        if(userChoice.equals(serverChoice)){
+        if (userChoice.equals(serverChoice)) {
             result = "Draw!";
-        } else if((userChoice.equals("rock")&&serverChoice.equals("scissors"))||
-                (userChoice.equals("paper")&&serverChoice.equals("rock")) ||
-                (userChoice.equals("scissors")&&serverChoice.equals("paper"))){
-            result ="You win!";
-        }else{
-            result="Yout lose!";
+        } else if ((userChoice.equals("rock") && serverChoice.equals("scissors")) ||
+                (userChoice.equals("paper") && serverChoice.equals("rock")) ||
+                (userChoice.equals("scissors") && serverChoice.equals("paper"))) {
+            result = "You win!";
+        } else {
+            result = "You lose!";
         }
-        return "Server chose "+ serverChoice+". "+result;
-    }
 
+        logger.info("Server choice: {}, Result: {}", serverChoice, result);  // 디버깅 로그
+        return "Server chose " + serverChoice + ". " + result;
+    }
 }
 //@RestController
 //public class GameController {

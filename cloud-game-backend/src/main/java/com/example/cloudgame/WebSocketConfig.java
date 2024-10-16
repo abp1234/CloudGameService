@@ -5,20 +5,22 @@ import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.*;
 
 @Configuration
-//@EnableWebSocket
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
-    public void configureMessageBroker(MessageBrokerRegistry config){
-        config.enableSimpleBroker("/topic");
-        config.setApplicationDestinationPrefixes("/app");
+    public void configureMessageBroker(MessageBrokerRegistry config) {
+        config.enableSimpleBroker("/topic");  // 클라이언트로 보내는 메시지 경로
+        config.setApplicationDestinationPrefixes("/app");  // 클라이언트에서 서버로 보내는 메시지 경로
     }
 
     @Override
-    public void registerStompEndpoints(StompEndpointRegistry registry){
-        registry.addEndpoint("/game").setAllowedOriginPatterns("*").withSockJS();
+    public void registerStompEndpoints(StompEndpointRegistry registry) {
+        registry.addEndpoint("/game")
+                .setAllowedOriginPatterns("*")
+                .withSockJS();  // SockJS 엔드포인트
     }
+}
 
 //    @Override
 //    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
@@ -26,4 +28,3 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 ////        registry.addHandler(new SignalHandler(), "/signal").setAllowedOrigins("*");
 //        registry.addEndpoint("/game").setAllowedOriginPatterns("*").withSockJS();
 //    }
-}

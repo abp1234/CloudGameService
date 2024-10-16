@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+// @ts-ignore
 import io, { Socket } from 'socket.io-client';
 import SimplePeer, { Instance, SignalData } from 'simple-peer';
 
